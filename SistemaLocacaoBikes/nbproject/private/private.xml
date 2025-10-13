@@ -3,10 +3,12 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/D:/2025/2º%20Semestre/DS/2º%20Projeto%20NetBeans/SistemaLocacaoBikes/src/model/Cliente.java</file>
-            <file>file:/D:/2025/2º%20Semestre/DS/2º%20Projeto%20NetBeans/SistemaLocacaoBikes/src/dao/ConnectionFactory.java</file>
-            <file>file:/D:/2025/2º%20Semestre/DS/2º%20Projeto%20NetBeans/SistemaLocacaoBikes/src/view/TelaClientes.java</file>
-            <file>file:/D:/2025/2º%20Semestre/DS/2º%20Projeto%20NetBeans/SistemaLocacaoBikes/src/dao/ClienteDAO.java</file>
+            <file>file:/C:/Users/Etec/Desktop/locadora-bikes/SistemaLocacaoBikes/src/view/TelaClientes.java</file>
+            <file>file:/C:/Users/Etec/Desktop/locadora-bikes/SistemaLocacaoBikes/src/view/TelaBicicletas.java</file>
+            <file>file:/C:/Users/Etec/Desktop/locadora-bikes/SistemaLocacaoBikes/src/model/Bicicleta.java</file>
+            <file>file:/C:/Users/Etec/Desktop/locadora-bikes/SistemaLocacaoBikes/src/model/Cliente.java</file>
+            <file>file:/C:/Users/Etec/Desktop/locadora-bikes/SistemaLocacaoBikes/src/dao/BicicletaDAO.java</file>
+            <file>file:/C:/Users/Etec/Desktop/locadora-bikes/SistemaLocacaoBikes/src/dao/ClienteDAO.java</file>
         </group>
     </open-files>
 </project-private>
