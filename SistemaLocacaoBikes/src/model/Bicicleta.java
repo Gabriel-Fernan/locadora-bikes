@@ -1,6 +1,6 @@
 package model;
 
-public class Bicicleta {
+public class Bicicleta{
     private int id;
     private String codigo;
     private String status;

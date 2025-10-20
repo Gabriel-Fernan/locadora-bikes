@@ -4,10 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 import model.Bicicleta;
 
-public class BicicletaDAO {
+public class BicicletaDAO{
     public void create(Bicicleta b){
         try (Connection con = ConnectionFactory.getConnection()){
-            String sql = "INSERT INTO bicicleta(codigo, status) VALUES (?, ?)";
+            String sql = "INSERT INTO bicicleta (codigo, status) VALUES (?, ?)";
             PreparedStatement stmt = con.prepareStatement(sql);
             stmt.setString(1, b.getCodigo());
             stmt.setString(2, b.getStatus());
