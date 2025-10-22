@@ -1,11 +1,45 @@
 package view;
+import dao.ManutencaoDAO;
+import model.Manutencao;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.JOptionPane;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Date;
+import java.text.SimpleDateFormat;
+import java.text.ParseException;
 
 public class TelaManutencao extends javax.swing.JFrame{
-    
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(TelaManutencao.class.getName());
+    private List<Manutencao> listaManutencoes;
+    private int proximoIdManutencao = 1;
 
     public TelaManutencao(){
         initComponents();
+        listaManutencoes = new ArrayList<>();
+        configurarTabela();
+        cbBicicletas.setModel(new javax.swing.DefaultComboBoxModel<>(new String[]{"Bicicleta 1", "Bicicleta 2", "Bicicleta 3", "Bicicleta 4"}));
+    }
+
+    private void configurarTabela(){
+        DefaultTableModel modelo = new DefaultTableModel(new Object[][]{}, new String[]{"ID", "Bicicleta ID", "Descrição", "Data"});
+        tabelaManutencao.setModel(modelo);
+    }
+
+    private void carregarTabela(){
+        DefaultTableModel modelo = (DefaultTableModel) tabelaManutencao.getModel();
+        modelo.setRowCount(0); 
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+
+        for (Manutencao manutencao : listaManutencoes){
+            String dataFormatada = (manutencao.getData() != null) ? sdf.format(manutencao.getData()) : "";
+            modelo.addRow(new Object[]{
+                manutencao.getId(),
+                manutencao.getBicicletaId(),
+                manutencao.getDescricao(),
+                dataFormatada
+            });
+        }
     }
 
     @SuppressWarnings("unchecked")
@@ -25,7 +59,7 @@ public class TelaManutencao extends javax.swing.JFrame{
         setPreferredSize(new java.awt.Dimension(547, 341));
         setResizable(false);
 
-        cbBicicletas.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        cbBicicletas.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Bicicleta", "Item 1", "Item 2", "Item 3", "Item 4" }));
 
         txtDescricao.setColumns(20);
         txtDescricao.setRows(5);
@@ -35,8 +69,18 @@ public class TelaManutencao extends javax.swing.JFrame{
         txtData.setText("Data");
 
         btnRegistrar.setText("Registrar");
+        btnRegistrar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnRegistrarActionPerformed(evt);
+            }
+        });
 
         btnListar.setText("Listar");
+        btnListar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnListarActionPerformed(evt);
+            }
+        });
 
         tabelaManutencao.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -94,6 +138,61 @@ public class TelaManutencao extends javax.swing.JFrame{
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void btnRegistrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRegistrarActionPerformed
+        String bicicletaSelecionada = (String) cbBicicletas.getSelectedItem();
+        String descricao = txtDescricao.getText();
+        String dataStr = txtData.getText();
+
+        if (bicicletaSelecionada != null && !descricao.isEmpty() && !dataStr.isEmpty()){
+            try{
+                int bicicletaId = Integer.parseInt(bicicletaSelecionada.replaceAll("[^0-9]", ""));
+
+                SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+                Date data = sdf.parse(dataStr);
+
+                Manutencao novaManutencao = new Manutencao();
+                novaManutencao.setId(proximoIdManutencao++); 
+                novaManutencao.setBicicletaId(bicicletaId);
+                novaManutencao.setDescricao(descricao);
+                novaManutencao.setData(data);
+
+                listaManutencoes.add(novaManutencao);
+                carregarTabela();
+
+                txtDescricao.setText("");
+                txtData.setText("");
+                cbBicicletas.setSelectedIndex(0);
+
+                JOptionPane.showMessageDialog(this, "Manutenção registrada com sucesso!");
+            } 
+            
+            catch (NumberFormatException e){
+                JOptionPane.showMessageDialog(this, "ID da bicicleta inválido. Por favor, selecione um item válido.", "Erro de Formato", JOptionPane.ERROR_MESSAGE);
+                logger.log(java.util.logging.Level.SEVERE, "Erro ao converter ID da bicicleta", e);
+            } 
+            
+            catch (ParseException e){
+                JOptionPane.showMessageDialog(this, "Formato de data inválido. Use dd/MM/yyyy.", "Erro de Formato", JOptionPane.ERROR_MESSAGE);
+                logger.log(java.util.logging.Level.SEVERE, "Erro ao converter data", e);
+            }
+        } 
+        
+        else{
+            JOptionPane.showMessageDialog(this, "Por favor, preencha todos os campos.", "Erro", JOptionPane.ERROR_MESSAGE);
+        }
+    }//GEN-LAST:event_btnRegistrarActionPerformed
+
+    private void btnListarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnListarActionPerformed
+        carregarTabela();
+        if (listaManutencoes.isEmpty()){
+            JOptionPane.showMessageDialog(this, "Nenhuma manutenção registrada para listar.");
+        } 
+        
+        else{
+            JOptionPane.showMessageDialog(this, "Tabela atualizada com as manutenções registradas.");
+        }
+    }//GEN-LAST:event_btnListarActionPerformed
 
     public static void main(String args[]){
         try{

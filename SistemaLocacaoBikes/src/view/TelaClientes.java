@@ -1,5 +1,9 @@
 package view;
-
+import dao.ClienteDAO;
+import model.Cliente;
+import java.util.List;
+import javax.swing.UnsupportedLookAndFeelException;
+import javax.swing.table.DefaultTableModel;
 
 public class TelaClientes extends javax.swing.JFrame{
     
@@ -7,6 +11,7 @@ public class TelaClientes extends javax.swing.JFrame{
 
     public TelaClientes(){
         initComponents();
+        listarClientes();
     }
 
     @SuppressWarnings("unchecked")
@@ -46,6 +51,11 @@ public class TelaClientes extends javax.swing.JFrame{
         txtEmail.setText("Email");
 
         btnNovo.setText("Novo");
+        btnNovo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnNovoActionPerformed(evt);
+            }
+        });
 
         btnSalvar.setText("Salvar");
         btnSalvar.addActionListener(new java.awt.event.ActionListener() {
@@ -55,8 +65,18 @@ public class TelaClientes extends javax.swing.JFrame{
         });
 
         btnEditar.setText("Editar");
+        btnEditar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnEditarActionPerformed(evt);
+            }
+        });
 
         btnExcluir.setText("Excluir");
+        btnExcluir.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnExcluirActionPerformed(evt);
+            }
+        });
 
         btnListar.setText("Listar");
         btnListar.addActionListener(new java.awt.event.ActionListener() {
@@ -133,7 +153,7 @@ public class TelaClientes extends javax.swing.JFrame{
     }// </editor-fold>//GEN-END:initComponents
 
     private void txtNomeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtNomeActionPerformed
-        // TODO add your handling code here:
+        
     }//GEN-LAST:event_txtNomeActionPerformed
 
     private void btnSalvarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSalvarActionPerformed
@@ -145,30 +165,64 @@ public class TelaClientes extends javax.swing.JFrame{
         
         ClienteDAO dao = new ClienteDAO();
         dao.create(c);
-        listarCliente();
+        listarClientes();
     }//GEN-LAST:event_btnSalvarActionPerformed
 
     private void txtCpfActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtCpfActionPerformed
-        // TODO add your handling code here:
+        
     }//GEN-LAST:event_txtCpfActionPerformed
 
     private void btnListarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnListarActionPerformed
-        public void ListarClientes(){
-            List<Cliente> lista = new ClienteDAO().read();
-            DefaultTableModel modelo = (DefaultTableModel) tabelaClientes.getModel();
-            modelo.setRowCount(0); //Limpa a tabela
-            for (Cliente c : lista){
-                modelo.addRow(new Object[]{
-                    c.getId(),
-                    c.getNome(),
-                    c.getCpf(),
-                    c.getTelefone(),
-                    c.getEmail()
-                });
-            }
-        }
+        listarClientes();
     }//GEN-LAST:event_btnListarActionPerformed
 
+    private void btnEditarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEditarActionPerformed
+        int row = tabelaClientes.getSelectedRow();
+        if (row != -1){
+            Cliente c = new Cliente();
+            c.setId((int) tabelaClientes.getValueAt(row, 0));
+            c.setNome(txtNome.getText());
+            c.setCpf(txtCpf.getText());
+            c.setTelefone(txtTelefone.getText());
+            c.setEmail(txtEmail.getText());
+
+            new ClienteDAO().update(c);
+            listarClientes();
+        }
+    }//GEN-LAST:event_btnEditarActionPerformed
+
+    private void btnExcluirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnExcluirActionPerformed
+        int row = tabelaClientes.getSelectedRow();
+        if (row != -1) {
+            Cliente c = new Cliente();
+            c.setId((int) tabelaClientes.getValueAt(row, 0));
+            new ClienteDAO().delete(c);
+            listarClientes();
+        }
+    }//GEN-LAST:event_btnExcluirActionPerformed
+
+    private void btnNovoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNovoActionPerformed
+        txtNome.setText("");
+        txtCpf.setText("");
+        txtTelefone.setText("");
+        txtEmail.setText("");
+    }//GEN-LAST:event_btnNovoActionPerformed
+
+    private void listarClientes() {
+        List<Cliente> lista = new ClienteDAO().read();
+        DefaultTableModel modelo = (DefaultTableModel) tabelaClientes.getModel();
+        modelo.setRowCount(0);
+        for (Cliente c : lista) {
+            modelo.addRow(new Object[]{
+                c.getId(),
+                c.getNome(),
+                c.getCpf(),
+                c.getTelefone(),
+                c.getEmail()
+            });
+        }
+    }
+    
     public static void main(String args[]){
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
         /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
@@ -181,7 +235,9 @@ public class TelaClientes extends javax.swing.JFrame{
                     break;
                 }
             }
-        } catch (ReflectiveOperationException | javax.swing.UnsupportedLookAndFeelException ex) {
+        } 
+        
+        catch (ReflectiveOperationException | javax.swing.UnsupportedLookAndFeelException ex) {
             logger.log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>

@@ -1,5 +1,6 @@
 package view;
-
+import dao.LocacaoDAO;
+import model.Locacao;
 
 public class TelaLocacao extends javax.swing.JFrame{
     
@@ -35,14 +36,14 @@ public class TelaLocacao extends javax.swing.JFrame{
         ));
         jScrollPane1.setViewportView(TabelaLocacoes);
 
-        cbClientes.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        cbClientes.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Cliente", "Item 1", "Item 2", "Item 3", "Item 4" }));
         cbClientes.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 cbClientesActionPerformed(evt);
             }
         });
 
-        cbBicicletasDisponiveis.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        cbBicicletasDisponiveis.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Bicicleta Disponivel", "Item 1", "Item 2", "Item 3", "Item 4" }));
 
         btnAlugar.setText("Alugar");
 
@@ -90,7 +91,7 @@ public class TelaLocacao extends javax.swing.JFrame{
     }// </editor-fold>//GEN-END:initComponents
 
     private void cbClientesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbClientesActionPerformed
-        // TODO add your handling code here:
+        
     }//GEN-LAST:event_cbClientesActionPerformed
 
     public static void main(String args[]){

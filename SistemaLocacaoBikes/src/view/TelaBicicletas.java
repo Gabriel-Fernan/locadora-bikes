@@ -1,5 +1,12 @@
 package view;
-
+import dao.BicicletaDAO;
+import model.Bicicleta;
+import dao.ConnectionFactory;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.util.List;
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
 
 public class TelaBicicletas extends javax.swing.JFrame{
     
@@ -19,7 +26,7 @@ public class TelaBicicletas extends javax.swing.JFrame{
         cbStatus = new javax.swing.JComboBox<>();
         btnNovo = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
-        tabelaClientes = new javax.swing.JTable();
+        tabelaBicicletas = new javax.swing.JTable();
         btnSalvar = new javax.swing.JButton();
         btnEditar = new javax.swing.JButton();
         btnExcluir = new javax.swing.JButton();
@@ -46,8 +53,13 @@ public class TelaBicicletas extends javax.swing.JFrame{
         });
 
         btnNovo.setText("Novo");
+        btnNovo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnNovoActionPerformed(evt);
+            }
+        });
 
-        tabelaClientes.setModel(new javax.swing.table.DefaultTableModel(
+        tabelaBicicletas.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null},
                 {null, null, null, null},
@@ -58,7 +70,7 @@ public class TelaBicicletas extends javax.swing.JFrame{
                 "Title 1", "Title 2", "Title 3", "Title 4"
             }
         ));
-        jScrollPane1.setViewportView(tabelaClientes);
+        jScrollPane1.setViewportView(tabelaBicicletas);
 
         btnSalvar.setText("Salvar");
         btnSalvar.addActionListener(new java.awt.event.ActionListener() {
@@ -68,8 +80,18 @@ public class TelaBicicletas extends javax.swing.JFrame{
         });
 
         btnEditar.setText("Editar");
+        btnEditar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnEditarActionPerformed(evt);
+            }
+        });
 
         btnExcluir.setText("Excluir");
+        btnExcluir.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnExcluirActionPerformed(evt);
+            }
+        });
 
         btnListar.setText("Listar");
         btnListar.addActionListener(new java.awt.event.ActionListener() {
@@ -129,38 +151,138 @@ public class TelaBicicletas extends javax.swing.JFrame{
     }// </editor-fold>//GEN-END:initComponents
 
     private void cbStatusActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbStatusActionPerformed
-        // TODO add your handling code here:
+        
     }//GEN-LAST:event_cbStatusActionPerformed
 
     private void txtCodigoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtCodigoActionPerformed
-        // TODO add your handling code here:
+        
     }//GEN-LAST:event_txtCodigoActionPerformed
 
     private void btnSalvarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSalvarActionPerformed
         Bicicleta b = new Bicicleta();
         b.setCodigo(txtCodigo.getText());
-        n.setStatus(cbStatus.getSelectedItem().toString());
-        
-        BicicletaDAO dao = BicicletaDAO();
+        b.setStatus(cbStatus.getSelectedItem().toString());
+
+        if (b.getCodigo().isEmpty()){
+            JOptionPane.showMessageDialog(this, "Preencha o código da bicicleta!");
+            return;
+        }
+
+        BicicletaDAO dao = new BicicletaDAO();
         dao.create(b);
         listarBicicletas();
+
+        JOptionPane.showMessageDialog(this, "Bicicleta cadastrada com sucesso!");
+        btnNovoActionPerformed(evt);
     }//GEN-LAST:event_btnSalvarActionPerformed
 
     private void btnListarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnListarActionPerformed
-        public void ListarBicicletas(){
-            List<Bicicleta> lista = new BicicletaDAO().read();
-            DefaultTableModel modelo = (DefaultTableModel)tabelaBicicletas.getModel();
-            modelo.setRowCount(0);
-            for (Bicicleta b : lista){
-                modelo.addRow(new Object[]{
-                    b.getId(),
-                    b.getCodigo(),
-                    b.getStatus()
-                });
-            }
-        }
+        listarBicicletas();
     }//GEN-LAST:event_btnListarActionPerformed
 
+    private void btnNovoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNovoActionPerformed
+        txtCodigo.setText("");
+        cbStatus.setSelectedIndex(0);
+        txtCodigo.requestFocus();
+    }//GEN-LAST:event_btnNovoActionPerformed
+
+    private void btnEditarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEditarActionPerformed
+        int selectedRow = tabelaBicicletas.getSelectedRow();
+        if (selectedRow == -1){
+            JOptionPane.showMessageDialog(this, "Selecione uma bicicleta na tabela!");
+            return;
+        }
+
+        Bicicleta b = new Bicicleta();
+        b.setId((int) tabelaBicicletas.getValueAt(selectedRow, 0));
+        b.setCodigo(txtCodigo.getText());
+        b.setStatus(cbStatus.getSelectedItem().toString());
+
+        BicicletaDAO dao = new BicicletaDAO();
+        dao.update(b);
+
+        listarBicicletas();
+        JOptionPane.showMessageDialog(this, "Bicicleta atualizada com sucesso!");
+    }//GEN-LAST:event_btnEditarActionPerformed
+
+    private void btnExcluirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnExcluirActionPerformed
+        int selectedRow = tabelaBicicletas.getSelectedRow();
+        if (selectedRow == -1){
+            JOptionPane.showMessageDialog(this, "Selecione uma bicicleta para excluir!");
+            return;
+        }
+
+        Object idObj = tabelaBicicletas.getValueAt(selectedRow, 0);
+        int id;
+
+        try{
+            if (idObj instanceof Integer){
+                id = (Integer) idObj;
+            } 
+            
+            else{
+                id = Integer.parseInt(idObj.toString());
+            }
+        } 
+        
+        catch (Exception e){
+            JOptionPane.showMessageDialog(this, "Erro ao obter o ID: " + e.getMessage());
+            return;
+        }
+
+        int confirm = JOptionPane.showConfirmDialog(
+            this,
+            "Deseja realmente excluir esta bicicleta?",
+            "Confirmação",
+            JOptionPane.YES_NO_OPTION
+        );
+
+        if (confirm == JOptionPane.YES_OPTION){
+            try (Connection con = ConnectionFactory.getConnection()){
+                String sql = "DELETE FROM bicicleta WHERE id = ?";
+                PreparedStatement stmt = con.prepareStatement(sql);
+                stmt.setInt(1, id);
+
+                int rows = stmt.executeUpdate();
+                if (rows > 0){
+                    JOptionPane.showMessageDialog(this, "Bicicleta excluída com sucesso!");
+                } 
+                
+                else{
+                    JOptionPane.showMessageDialog(this, "Nenhuma bicicleta encontrada com este ID.");
+                }
+
+                listarBicicletas();
+            } 
+            
+            catch (Exception e){
+                JOptionPane.showMessageDialog(this, "Erro ao excluir bicicleta: " + e.getMessage());
+                e.printStackTrace();
+            }
+        }
+    }//GEN-LAST:event_btnExcluirActionPerformed
+
+    private void tabelaBicicletasMouseClicked(java.awt.event.MouseEvent evt) {
+        int row = tabelaBicicletas.getSelectedRow();
+        if (row != -1) {
+            txtCodigo.setText(tabelaBicicletas.getValueAt(row, 1).toString());
+            cbStatus.setSelectedItem(tabelaBicicletas.getValueAt(row, 2).toString());
+        }
+    }
+
+    public void listarBicicletas() {
+        List<Bicicleta> lista = new BicicletaDAO().read();
+        DefaultTableModel modelo = (DefaultTableModel) tabelaBicicletas.getModel();
+        modelo.setRowCount(0);
+
+        for (Bicicleta b : lista) {
+            modelo.addRow(new Object[]{
+                b.getId(),
+                b.getCodigo(),
+                b.getStatus()
+            });
+        }
+    }
 
     public static void main(String args[]){
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
@@ -192,7 +314,7 @@ public class TelaBicicletas extends javax.swing.JFrame{
     private javax.swing.JEditorPane jEditorPane1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
-    private javax.swing.JTable tabelaClientes;
+    private javax.swing.JTable tabelaBicicletas;
     private javax.swing.JTextField txtCodigo;
     // End of variables declaration//GEN-END:variables
 }
